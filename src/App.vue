@@ -1,12 +1,17 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import HelloWorld from './components/HelloWorld.vue'
+import MovieList from './components/MovieList.vue'
+import SearchBar from './components/SearchBar.vue'
+import { Movie, fetchMovie } from './api/api'
 
-const count = ref(0)
+const data = ref<Movie[]>([])
+
+const searchMovie = async (title: string) => {
+  data.value = await fetchMovie(title)
+}
 </script>
 
 <template>
-  <h2>App.vue</h2>
-  <h3>{{ count }}</h3>
-  <HelloWorld />
+  <SearchBar @submit-title="searchMovie" />
+  <MovieList :movies="data" />
 </template>
