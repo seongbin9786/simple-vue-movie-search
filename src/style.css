@@ -6,7 +6,6 @@
 
 ::-webkit-scrollbar-track {
   background-color: #fdbb2d;
-  border-radius: 100px;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -41,7 +40,7 @@ input {
 .movies {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-
+  margin-bottom: 80px;
   height: 100%;
 }
 
@@ -57,6 +56,8 @@ input {
   gap: 8px;
 
   width: 100%;
+
+  cursor: pointer;
 }
 
 .movie__description {
