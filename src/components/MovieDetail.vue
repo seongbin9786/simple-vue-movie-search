@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import type { MovieDetail } from "../api/api";
 import { goBack } from "../shared/goBack";
+import MoviePoster from "./MoviePoster.vue";
 
 interface Props {
     id: string;
@@ -82,7 +83,7 @@ try {
             </div>
         </div>
         <div class="detail__right-section">
-            <img class="detail__poster" :src="detail.poster.replace('SX300', 'SX700')" />
+            <MoviePoster class="detail__poster" :src="detail.poster.replace('SX300', 'SX700')" />
         </div>
     </div>
 </template>

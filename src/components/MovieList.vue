@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Movie } from "../api/api";
+import MoviePoster from "./MoviePoster.vue";
 import { goTo } from "../shared/goTo";
 
 interface Props {
@@ -46,7 +47,7 @@ const goToDetailPage = (e: MouseEvent) => {
                 <h3 class="movie__title">{{ title }}</h3>
                 <span class="movie__year">{{ year }}</span>
             </div>
-            <img class="movie__poster" :src="poster" />
+            <MoviePoster class="movie__poster" :src="poster" />
         </div>
     </div>
 </template>
