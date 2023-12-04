@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Movie } from "../api/api";
+import { goTo } from "../shared/goTo";
 
 interface Props {
     movies: Movie[] | null;
@@ -15,25 +16,37 @@ const findParent = ($: HTMLElement): HTMLElement => {
     return findParent($.parentElement as HTMLElement);
 };
 
-const openDetail = (e: MouseEvent) => {
-    const $ = findParent(e.target as HTMLElement);
-    const { id } = $.dataset;
-    // TODO: 상세 페이지 표시
+const goToDetailPage = (e: MouseEvent) => {
+    const target = e.target as HTMLElement;
 
-    console.log(id);
+    // moives 영역 클릭한 경우
+    if (target.classList.contains("movies")) {
+        return;
+    }
+
+    const $ = findParent(target);
+
+    const { id } = $.dataset;
+
+    goTo(`/details/${id}`);
 };
 </script>
 
 <template>
     <div v-if="!movies"></div>
     <div v-else-if="movies.length === 0">검색 결과가 없습니다!</div>
-    <div v-else class="movies" @click="openDetail">
-        <div v-for="movie in movies" :key="movie.imdbID" :data-id="movie.imdbID" class="movie">
+    <div v-else class="movies" @click="goToDetailPage">
+        <div
+            v-for="{ title, year, poster, imdbID } in movies"
+            :key="imdbID"
+            :data-id="imdbID"
+            class="movie"
+        >
             <div class="movie__description">
-                <h3 class="movie__title">{{ movie.title }}</h3>
-                <span class="movie__year">{{ movie.year }}</span>
+                <h3 class="movie__title">{{ title }}</h3>
+                <span class="movie__year">{{ year }}</span>
             </div>
-            <img class="movie__poster" :src="movie.poster" />
+            <img class="movie__poster" :src="poster" />
         </div>
     </div>
 </template>
