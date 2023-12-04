@@ -25,12 +25,12 @@ const URL = `${IMDB_API_HOST}/?apikey=${IMDB_API_KEY}`;
  * @param title 영화 제목
  * @returns 영화 목록 배열
  */
-const fetchIMDBMovieList = async (title: string): Promise<Movie[]> => {
+const fetchIMDBMovieList = async (title: string, page: number): Promise<Movie[]> => {
     let result;
 
     // CASE 1. Vercel 쪽에서 오류가 발생한 경우 (e.g. fetch가 없다거나 fetch 도중 오류)
     try {
-        const res = await fetch(`${URL}&s=${title}`);
+        const res = await fetch(`${URL}&s=${title}&page=${page}`);
         result = await res.json();
     } catch (e) {
         console.log(e); // 예기치 못한 오류이기 때문에 디버깅 용도로 필요
@@ -52,6 +52,26 @@ const fetchIMDBMovieList = async (title: string): Promise<Movie[]> => {
     }));
 };
 
+const fetchTotalPages = async (title: string): Promise<number> => {
+    let result;
+
+    // CASE 1. Vercel 쪽에서 오류가 발생한 경우 (e.g. fetch가 없다거나 fetch 도중 오류)
+    try {
+        const res = await fetch(`${URL}&s=${title}`);
+        result = await res.json();
+    } catch (e) {
+        console.log(e); // 예기치 못한 오류이기 때문에 디버깅 용도로 필요
+        throw new InternalServerError("API 서버 오류가 발생했습니다.");
+    }
+
+    // CASE 2. 결과가 없는 경우
+    if (result.Response === "False" || !result.Search) {
+        throw new InternalServerError("API 서버 오류가 발생했습니다.");
+    }
+
+    return Math.ceil(result.totalResults / 10);
+};
+
 /**
  * GET /api/list
  *
@@ -70,8 +90,15 @@ export default async function handleMovieList(request: VercelRequest, response: 
         }
 
         const { searchKeyword } = request.query;
-        const imdbApiResponse = await fetchIMDBMovieList(searchKeyword);
-        response.status(200).json(imdbApiResponse);
+
+        // 한 번에 모든 page를 일괄 요청
+        const totalPages = await fetchTotalPages(searchKeyword);
+        const requests = Array.from({ length: totalPages }).map((_, idx) =>
+            fetchIMDBMovieList(searchKeyword, idx + 1),
+        );
+        const totalResponse = (await Promise.all(requests)).flat();
+
+        response.status(200).json(totalResponse);
     } catch (e) {
         if (e instanceof BadRequestError) {
             response.status(400).send(e.message);
