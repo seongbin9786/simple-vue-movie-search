@@ -1,0 +1,46 @@
+.detail {
+    width: 60%;
+
+    /* vertical center 효과 하나 때문에 container 놓기 좀 그래서 */
+    margin: auto 0;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    gap: 16px;
+}
+
+.detail__left-section {
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 8px;
+}
+
+.detail__right-section {
+    flex: 1;
+}
+
+.detail__poster {
+    width: 100%;
+}
+
+.detail__left-section > div {
+    display: flex;
+    flex-direction: row;
+
+    gap: 8px;
+}
+
+.detail__left-section > div > span:first-child {
+    font-weight: bold;
+
+    word-break: keep-all;
+}
+
+.detail__left-section > div > span:nth-child(2) {
+    word-break: break-all;
+}
