@@ -22,7 +22,7 @@ export interface MovieDetail {
     production: string;
 }
 
-export const fetchMovie = async (title: string): Promise<Movie[]> => {
+export const fetchMovieList = async (title: string): Promise<Movie[]> => {
     const res = await fetch(`/api/list?searchKeyword=${title}`);
 
     if (res.status === 400) {
