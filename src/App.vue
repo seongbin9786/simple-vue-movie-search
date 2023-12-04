@@ -16,5 +16,12 @@ const pathConfig = [
 </script>
 
 <template>
-    <PathRouter :path-config="pathConfig"></PathRouter>
+    <!-- 
+        MovieDetailPage의 경우 인스턴스 캐싱 시 직전의 정보가 먼저 보이게 되므로 캐싱에서 제외
+        MovieSearchPage는 검색 결과가 보존되어야 하므로 포함 
+    -->
+    <PathRouter
+        :cached-instance-name-pattern="/MovieSearchPage/"
+        :path-config="pathConfig"
+    ></PathRouter>
 </template>

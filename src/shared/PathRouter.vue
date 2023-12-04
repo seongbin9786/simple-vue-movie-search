@@ -4,6 +4,11 @@ import { type Component, shallowRef } from "vue";
 import NotFoundPage from "./NotFoundPage.vue";
 
 interface Props {
+    /**
+     * keep-alive로 인스턴스를 캐싱할 이름
+     * @see https://ko.vuejs.org/guide/built-ins/keep-alive#include-exclude
+     */
+    cachedInstanceNamePattern: RegExp;
     pathConfig: {
         path: RegExp;
         component: Component;
@@ -54,7 +59,7 @@ window.addEventListener("goto", (e) => {
     <!-- keep-alive를 사용하면 컴포넌트 인스턴스 하나를 살려 놓은 상태로 공유함(인스턴스 캐싱이라고 함). -->
     <!-- DetailPage -> SearchPage로 이동 시 기존 검색 결과가 보존됨. -->
     <!-- 참고: https://vuejs.org/guide/built-ins/keep-alive.html#keepalive -->
-    <keep-alive>
+    <keep-alive :include="cachedInstanceNamePattern">
         <component :is="currentComponent"></component>
     </keep-alive>
 </template>
