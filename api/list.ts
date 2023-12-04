@@ -16,16 +16,43 @@ interface APIResponse {
     Poster: string;
 }
 
-export const fetchMovie = async (title: string): Promise<Movie[]> => {
-    const res = await fetch(`http://www.omdbapi.com/?i=tt3896198&apikey=8488a957&s=${title}`);
-    const result = await res.json(); // { 3개 필드 있음 }
+const INTERNAL_SERVER_ERROR = "500";
+const BAD_REQUEST = "400";
 
-    // imdb 쪽에서 어떤 이유로든 배열이 오지 않았음
-    if (result.Response === "False") {
-        throw new Error();
+// TODO: 테스트가 가능하려면 key 주입을 할 수 있는 형태가 필요
+const { IMDB_API_HOST, IMDB_API_KEY } = process.env;
+const URL = `${IMDB_API_HOST}/?apikey=${IMDB_API_KEY}`;
+
+/**
+ * IMDB 영화 목록 API를 요청한 결과를 반환한다.
+ *
+ * 결과가 없으면 400, 예외 발생 시 500을 반환한다.
+ *
+ * @param title 영화 제목
+ * @returns 영화 목록 배열
+ */
+export const fetchIMDBMovieList = async (title: string): Promise<Movie[]> => {
+    let result;
+
+    // CASE 1. Vercel 쪽에서 오류가 발생한 경우 (e.g. fetch가 없다거나 fetch 도중 오류)
+    try {
+        const res = await fetch(`${URL}&s=${title}`);
+        result = await res.json();
+    } catch (e) {
+        throw new Error(INTERNAL_SERVER_ERROR);
     }
 
-    // Movie[]
+    // CASE 2. 결과가 없는 경우
+    if (result.Response === "False") {
+        throw new Error(BAD_REQUEST);
+    }
+
+    // CASE 3. 결과 필드가 없는 경우
+    if (!result.Search) {
+        throw new Error(INTERNAL_SERVER_ERROR);
+    }
+
+    // CASE 4. 정상 결과인 경우
     return result.Search.map((item: APIResponse) => ({
         title: item.Title,
         year: item.Year,
@@ -35,21 +62,31 @@ export const fetchMovie = async (title: string): Promise<Movie[]> => {
     }));
 };
 
-export default async function handler(request: VercelRequest, response: VercelResponse) {
-    if (!request.query.searchKeyword) {
-        throw new Error("bad request 400");
-    }
-
-    if (request.query.searchKeyword instanceof Array) {
-        throw new Error("bad request 400");
-    }
-
-    const { searchKeyword } = request.query;
+/**
+ * GET /api/list
+ *
+ * IMDB 영화 목록 API 요청을 대신 수행해 일관되지 않은 응답을 일관성 있게 래핑한다.
+ *
+ * 입력 오류 시 400, 서버 오류 시 500을 반환한다.
+ *
+ * 결과가 없을는 검색어 또한 입력 오류에 포함된다.
+ */
+export default async function handleMovieList(request: VercelRequest, response: VercelResponse) {
     try {
-        const imdbApiResponse = await fetchMovie(searchKeyword);
+        if (!request.query.searchKeyword) {
+            throw new Error(BAD_REQUEST);
+        }
+
+        if (request.query.searchKeyword instanceof Array) {
+            throw new Error(BAD_REQUEST);
+        }
+
+        const { searchKeyword } = request.query;
+        const imdbApiResponse = await fetchIMDBMovieList(searchKeyword);
         response.status(200).json(imdbApiResponse);
-    } catch {
-        response.status(400).send("");
+    } catch (e) {
+        const statusCode = Number((e as Error).message);
+        response.status(statusCode).send("");
     }
 }
 
