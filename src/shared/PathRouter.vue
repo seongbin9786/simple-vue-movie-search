@@ -43,15 +43,37 @@ const findComponentForPath = () => {
 const currentComponent = shallowRef<Component | string>(findComponentForPath());
 
 // 뒤로 가기 시 popState 발생
+// 스크롤은 자동 복구됨
 window.addEventListener("popstate", () => {
     currentComponent.value = findComponentForPath();
 });
 
-// goTo 함수 호출 시 pushState 발생
+// goTo 함수 호출 시 pushState 발행 필요
 window.addEventListener("goto", (e) => {
-    const nextUrl = (e as CustomEvent).detail.href;
-    history.pushState({}, "", nextUrl);
+    const { href, prevPath, prevScrollX, prevScrollY } = (e as CustomEvent).detail;
+
+    // STEP 1. 기존 페이지의 스크롤 (x, y) 좌표 저장
+    sessionStorage.setItem(prevPath, `${prevScrollX},${prevScrollY}`);
+
+    // STEP 2. URL 이동
+    history.pushState({}, "", href);
     currentComponent.value = findComponentForPath();
+
+    // STEP 3. 스크롤 복원
+    // Vue가 frame 단위로 렌더링하기 때문에 대기 필요
+    requestAnimationFrame(() => {
+        const prevScroll = sessionStorage.getItem(window.location.pathname);
+        if (!prevScroll) {
+            return;
+        }
+        const [scrollX, scrollY] = prevScroll.split(",").map(Number);
+        console.log(scrollX, scrollY);
+        window.scrollTo({
+            top: scrollY,
+            left: scrollX,
+            behavior: "instant",
+        });
+    });
 });
 </script>
 

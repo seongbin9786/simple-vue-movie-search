@@ -10,6 +10,9 @@ export const goTo = (href: string) => {
         new CustomEvent("goto", {
             detail: {
                 href,
+                prevPath: window.location.pathname,
+                prevScrollX: window.scrollX,
+                prevScrollY: window.scrollY,
             },
         }),
     );

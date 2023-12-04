@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import type { MovieDetail } from "../api/api";
-import { goBack } from "../shared/goBack";
 import MoviePoster from "./MoviePoster.vue";
+import { goTo } from "../shared/goTo";
 
 interface Props {
     id: string;
@@ -29,7 +29,7 @@ try {
 </script>
 
 <template>
-    <a @click.prevent="goBack">목록으로 돌아가기</a>
+    <button class="nav-button" @click.prevent="goTo('/')">목록으로 돌아가기</button>
     <div v-if="!detail">영화 상세 정보가 없습니다.</div>
     <div v-else class="detail">
         <div class="detail__left-section">

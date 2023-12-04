@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import MovidDetail from "../components/MovieDetail.vue";
-import { goBack } from "../shared/goBack";
+import { goTo } from "../shared/goTo";
 
 const id = window.location.pathname.split("/").pop();
 
@@ -15,10 +15,7 @@ if (!id || id.length === 0) {
     <Suspense>
         <MovidDetail :id="id" />
         <template #fallback>
-            <div>
-                <span>영화 상세 정보를 로딩 중입니다...</span>
-                <a @click.prevent="goBack">목록으로 돌아가기</a>
-            </div>
+            <button class="nav-button" @click.prevent="goTo('/')">목록으로 돌아가기</button>
         </template>
     </Suspense>
 </template>
