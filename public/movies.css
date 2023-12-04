@@ -1,0 +1,51 @@
+.movies {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    margin-bottom: 80px;
+    height: 100%;
+}
+
+.movie {
+    display: flex;
+
+    /* y축으로 정렬 */
+    flex-direction: column;
+
+    /* x 축 중앙 배치 */
+    align-items: center;
+
+    gap: 8px;
+
+    width: 100%;
+
+    cursor: pointer;
+}
+
+.movie__description {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 4px;
+}
+
+.movie__title {
+    display: flex;
+    align-items: end;
+
+    margin: 0;
+
+    height: 3em;
+
+    /* 이렇게 하지 않으면 줄바꿈 할 때 중앙 배치가 안 됨. 이유 = ? */
+    text-align: center;
+    font-size: 30px;
+    font-weight: bold;
+}
+.movie__year {
+    font-size: 20px;
+}
+
+.movie__poster {
+    width: 65%;
+}

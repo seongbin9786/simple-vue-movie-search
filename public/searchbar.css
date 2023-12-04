@@ -1,0 +1,21 @@
+
+.search-bar {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    width: 50%;
+}
+
+.search-bar__title {
+    font-size: 45px;
+}
+
+.search-bar__input {
+    padding: 0 10px;
+    
+    border-radius: 1rem;
+
+    font-size: 3rem;
+}
