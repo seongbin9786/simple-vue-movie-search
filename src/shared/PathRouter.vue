@@ -67,7 +67,6 @@ window.addEventListener("goto", (e) => {
             return;
         }
         const [scrollX, scrollY] = prevScroll.split(",").map(Number);
-        console.log(scrollX, scrollY);
         window.scrollTo({
             top: scrollY,
             left: scrollX,
