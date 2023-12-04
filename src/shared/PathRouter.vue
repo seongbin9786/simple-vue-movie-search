@@ -22,8 +22,6 @@ const findComponentForPath = () => {
 
     const componentFound = pathConfig.find(({ path }) => pathname.match(path));
 
-    console.log("pathname:", pathname, "componentFound:", componentFound);
-
     if (!componentFound) {
         console.warn(`no component for ${pathname}, fall back to 404`);
         return NotFoundPage;
@@ -41,7 +39,6 @@ const currentComponent = shallowRef<Component | string>(findComponentForPath());
 
 // 뒤로 가기 시 popState 발생
 window.addEventListener("popstate", () => {
-    console.log("popstate:", window.location.pathname);
     currentComponent.value = findComponentForPath();
 });
 
