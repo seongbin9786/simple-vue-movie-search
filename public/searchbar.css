@@ -10,6 +10,8 @@
 
 .search-bar__title {
     font-size: 45px;
+
+    user-select: none;
 }
 
 .search-bar__input {
@@ -18,4 +20,10 @@
     border-radius: 1rem;
 
     font-size: 3rem;
+
+    color: #333;
+}
+
+.search-bar__input::placeholder {
+    font-style: italic;
 }
