@@ -8,7 +8,13 @@ import { Movie, fetchMovie } from "../api/api";
 const data = ref<Movie[] | null>(null);
 
 const searchMovie = async (title: string) => {
-    data.value = await fetchMovie(title);
+    try {
+        data.value = await fetchMovie(title);
+    } catch (e) {
+        if (e instanceof Error) {
+            alert(e.message);
+        }
+    }
 };
 </script>
 
