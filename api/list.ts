@@ -1,19 +1,8 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-
-/** 사용자 입력 오류를 표현 */
-class BadRequestError extends Error {}
-
-/** 서버 오류를 표현 */
-class InternalServerError extends Error {}
-
-/** 반환 값 */
-interface Movie {
-    title: string;
-    year: string;
-    imdbID: string;
-    type: string;
-    poster: string;
-}
+import type { Movie } from "../src/api/api.js";
+// .js를 붙이지 않으면 import 오류가 발생 (Error: Cannot find module '~~' imported from '~~')
+import { InternalServerError } from "./_InternalServerError.js";
+import { BadRequestError } from "./_BadRequestError.js";
 
 /** IMDB API의 반환 값 */
 interface IMDBResponse {
@@ -69,8 +58,6 @@ const fetchIMDBMovieList = async (title: string): Promise<Movie[]> => {
  * IMDB 영화 목록 API 요청을 대신 수행해 일관되지 않은 응답을 일관성 있게 래핑한다.
  *
  * 입력 오류 시 400, 서버 오류 시 500을 반환한다.
- *
- * 결과가 없을는 검색어 또한 입력 오류에 포함된다.
  */
 export default async function handleMovieList(request: VercelRequest, response: VercelResponse) {
     try {
