@@ -61,12 +61,12 @@ const fetchTotalPages = async (title: string): Promise<number> => {
         result = await res.json();
     } catch (e) {
         console.log(e); // 예기치 못한 오류이기 때문에 디버깅 용도로 필요
-        throw new InternalServerError("API 서버 오류가 발생했습니다.");
+        throw new InternalServerError("IMDB API 서버 오류가 발생했습니다.");
     }
 
     // CASE 2. 결과가 없는 경우
     if (result.Response === "False" || !result.Search) {
-        throw new InternalServerError("API 서버 오류가 발생했습니다.");
+        throw new InternalServerError(`IMDB API 서버 오류가 발생했습니다. (${result.Error})`);
     }
 
     return Math.ceil(result.totalResults / 10);
@@ -104,7 +104,6 @@ export default async function handleMovieList(request: VercelRequest, response: 
             response.status(400).send(e.message);
             return;
         }
-
         response.status(500).send((e as Error).message);
     }
 }
